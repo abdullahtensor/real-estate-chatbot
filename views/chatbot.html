@@ -1,0 +1,129 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="/public/styles/chatbot.css">
+</head>
+
+<body>
+
+<!-- ... (html code) -->
+    <div class="container">
+        <!-- Endpoint-I : Upload -->
+        <div class="upload-section">
+            <h2 style="text-align: center;">Chat-Doc</h2>
+            <form id="uploadForm">
+
+                <div class="form-row">
+                    <!-- Attachment field -->
+                    <div class="form-group">
+                        <label for="file">Attach File:</label>
+                        <input type="file" id="file" name="files" multiple>
+                    </div>
+
+                    <!-- Input field -->
+                    <div class="form-group">
+                        <label for="name">User Name:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                </div>
+
+                <button type="submit" onclick="submitForm(event, 'upload')">Upload</button>
+            </form>
+            <div id="uploadMessage"></div>
+            <div id="q1"></div>
+            <div id="q2"></div>
+            <div id="q3"></div>
+            <div id="q4"></div>
+        </div>
+        <!-- Endpoint-II : Chat -->
+        <div id="chat-section" class="chat-section" style="display: none;">
+            <div id="chat-container" class="chat-container"></div>
+
+            <form id="chatForm" onsubmit="submitForm(event, 'chat')">
+                <label for="prompt">Type Query:</label>
+                <input type="text" id="prompt" name="prompt" required>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+<!-- ... (javascript code) -->
+    <script>
+        async function checkUploadStatusAndDisplayChat() {
+            const checkStatusResponse = await fetch('{{ URL }}/api/v2/chatdoc/check-upload-status').then(response => response.json());
+
+            if (checkStatusResponse.status === 'processed') {
+                document.getElementById('chat-section').style.display = 'block';
+            } else {
+                setTimeout(checkUploadStatusAndDisplayChat, 5000); 
+            }
+        }
+        async function submitForm(event, formType) {
+            event.preventDefault();
+            
+            /* Upload Section */
+            if (formType === 'upload') {
+                const formData = new FormData(document.getElementById('uploadForm')); 
+                const uploadMessage = document.getElementById('uploadMessage'); 
+
+                uploadMessage.textContent = "Document uploaded. Wait for processing. \n";
+
+                const uploadResponse = await fetch('{{ URL }}/api/v2/chatdoc/upload/', {
+                    method: 'POST',
+                    body: formData,
+                }).then(response => response.json());
+                uploadMessage.textContent = uploadResponse.message;
+
+                // Initial Questions
+                const generateResponse = await fetch('{{ URL }}/api/v2/chatdoc/generatequestions', {
+                    method: 'POST',
+                }).then(response => response.json());
+                //generateResponse.questions.forEach(question => { uploadMessage.textContent += question + '\n'; })
+
+                generateResponse.questions.forEach((question, index) => {
+                const divId = `q${index + 1}`;
+                const questionDiv = document.getElementById(divId);
+                questionDiv.textContent = question;
+            });
+
+                // No chat section - Until upload is completed
+                checkUploadStatusAndDisplayChat();
+            }
+            /* Chat Section */ 
+            else if (formType === 'chat') {
+                const promptInput = document.getElementById('prompt');
+                const nameInput = document.getElementById('name');
+                const chatContainer = document.getElementById('chat-container');
+
+                const response = await fetch('{{ URL }}/api/v2/chatdoc/chatbot/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        prompt: promptInput.value,
+                        name: nameInput.value,
+                    }),
+                }).then(response => response.json());
+
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user-message';
+                userMessage.innerHTML = `<strong>${nameInput.value} :</strong> ${promptInput.value}`;
+                chatContainer.appendChild(userMessage);
+
+                const botMessage = document.createElement('div');
+                botMessage.className = 'message bot-message';
+                botMessage.innerHTML = `<strong>Bot:</strong> ${response.Response}`;
+                chatContainer.appendChild(botMessage);
+
+                promptInput.value = '';
+            }
+        }
+    </script>
+
+</body>
+</html>

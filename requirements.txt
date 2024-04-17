@@ -1,0 +1,39 @@
+numpy==1.26.2
+uvicorn==0.24.0.post1
+Pillow==10.1.0
+requests==2.31.0
+black==23.11.0
+pylint==3.0.3                  # default : 3.0.2
+python-semantic-release==8.3.0 # default : 8.3.0
+commitizen==3.12.0
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.0
+
+# my-dependencies
+transformers==4.38.0 
+accelerate==0.26.1
+einops==0.6.1 
+pydantic==2.6.1              # v2 : 1.10
+langchain==0.1.14           # v1 : 0.0.352
+xformers==0.0.21 
+bitsandbytes==0.42.0
+sentence_transformers==2.5.1 
+chromadb==0.4.22 
+streamlit==1.29.0
+pypdf==3.17.4
+ctransformers==0.2.27
+fastapi==0.109.2             # default : 0.104.1
+openai==1.13.3
+tiktoken==0.6.0
+langchainhub==0.1.15
+langchain-openai==0.1.1 
+langchain-community==0.0.31
+langchain-together==0.0.2
+#pydantic==1.10
+
+mypy==1.7.1
+mypy-extensions==1.0.0
+
+## pip install --upgrade pydantic

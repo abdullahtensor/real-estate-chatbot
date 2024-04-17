@@ -1,0 +1,90 @@
+/* static/styles/botpage.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f3eaea;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #333;
+}
+
+.upload-section, .chat-section {
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 8px;
+}
+
+input, button {
+    margin-bottom: 16px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #25d366;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #128c7e;
+}
+
+.chat-container {
+    overflow-y: scroll;
+    max-height: 500px;
+}
+
+.message {
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.user-message {
+    background-color: #DCF8C6;
+    text-align: left;
+}
+
+.bot-message {
+    background-color: #ffffff;
+    text-align: left;
+}
+
+.message strong {
+    margin-right: 8px;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-group {
+    flex: 1;
+    margin-right: 16px; /* Adjust as needed */
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 0; /* Remove the margin-bottom to center the heading */
+}

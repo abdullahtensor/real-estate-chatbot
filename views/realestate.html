@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/styles/realestate.css">
+    <title>Real Estate Chatbot</title>
+</head>
+<body>
+    <h1>Real Estate Chatbot</h1>
+    <div id="nameSection">
+        <form id="nameForm">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+        </form>
+    </div>
+    <div id="chatContainer">
+        <div id="chatHistory"></div>
+        <form id="chatForm">
+            <label for="message">Your Message:</label>
+            <input type="text" id="message" name="message" required><br><br>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("nameForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const userName = formData.get('name'); // Retrieve the value of the name input field
+            document.getElementById("nameSection").innerHTML = `<h2>Welcome, ${userName}!</h2>`;
+            document.getElementById("nameSection").style.display = "none"; // Hide the name section
+            document.getElementById("chatContainer").style.display = "block"; // Show the chat container
+        });
+
+        document.getElementById("chatForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const userName = document.getElementById("name").value; // Retrieve the value of the name input field
+            const message = document.getElementById("message").value.trim();
+
+            if (message === "") return; // Do not send empty messages
+
+            const chatHistory = document.getElementById("chatHistory");
+            const messageContainer = document.createElement("div");
+            messageContainer.className = "message-container user";
+            messageContainer.innerText = `${userName}: ${message}`;
+            chatHistory.appendChild(messageContainer);
+
+            fetch('/api/v2/realestatebot/chatbot', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    'question': message,
+                    'name': userName
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseContainer = document.createElement("div");
+                responseContainer.className = "message-container bot";
+                responseContainer.innerText = `Bot: ${data.Response}`;
+                chatHistory.appendChild(responseContainer);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            document.getElementById("message").value = ""; // Clear input field
+        });
+    </script>
+</body>
+</html>
